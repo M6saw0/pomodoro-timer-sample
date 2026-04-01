@@ -195,13 +195,11 @@ export function playSoundRepeated(
 
   playSound(soundId, volume)
 
-  let played = 1
   const timers: ReturnType<typeof setTimeout>[] = []
 
   for (let i = 1; i < repeatCount; i++) {
     const timer = setTimeout(() => {
       playSound(soundId, volume)
-      played = i + 1
     }, intervalMs * i)
     timers.push(timer)
   }
