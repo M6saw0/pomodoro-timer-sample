@@ -30,11 +30,23 @@ function isActivePreset(sequence: TimerSequence, preset: TimerSequence): boolean
 
 export function TimerSetup({ sequence, onStart, onSequenceChange }: TimerSetupProps) {
   const [editingDuration, setEditingDuration] = useState<Record<number, string>>({})
+  const [editingRepeat, setEditingRepeat] = useState<string | null>(null)
 
   const handleRepeatChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseInt(e.target.value, 10)
-    if (isNaN(val) || val < 1 || val > 10) return
-    onSequenceChange({ ...sequence, repeatCount: val })
+    const raw = e.target.value
+    setEditingRepeat(raw)
+    const val = parseInt(raw, 10)
+    if (!isNaN(val) && val >= 1 && val <= 10) {
+      onSequenceChange({ ...sequence, repeatCount: val })
+    }
+  }
+
+  const handleRepeatFocus = () => {
+    setEditingRepeat(String(sequence.repeatCount))
+  }
+
+  const handleRepeatBlur = () => {
+    setEditingRepeat(null)
   }
 
   const handleDurationChange = (index: number, value: string) => {
@@ -181,8 +193,10 @@ export function TimerSetup({ sequence, onStart, onSequenceChange }: TimerSetupPr
               className="repeat-input"
               min={1}
               max={10}
-              value={sequence.repeatCount}
+              value={editingRepeat ?? sequence.repeatCount}
               onChange={handleRepeatChange}
+              onFocus={handleRepeatFocus}
+              onBlur={handleRepeatBlur}
             />
             <span className="repeat-unit">回</span>
           </div>
